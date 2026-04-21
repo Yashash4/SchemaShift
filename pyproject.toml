@@ -28,8 +28,11 @@ ui = ["gradio>=4.20"]
 eval = ["openai>=1.30"]
 
 [tool.setuptools]
-packages = ["schemashift", "schemashift.tools", "schemashift.server", "schemashift.training"]
-package-dir = {"schemashift" = "."}
+py-modules = ["models", "drift", "scenarios", "graders", "client", "eval"]
+packages = ["tools", "server", "training"]
+
+[tool.setuptools.package-dir]
+"" = "."
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

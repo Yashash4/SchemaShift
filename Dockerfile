@@ -1,3 +1,14 @@
-# Placeholder — will be filled in Phase 7.
-# Target base: ghcr.io/meta-pytorch/openenv-base:latest
-# Expose port 7860 for HF Spaces Docker SDK.
+FROM ghcr.io/meta-pytorch/openenv-base:latest
+
+WORKDIR /app
+
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+
+COPY . .
+
+RUN pip install -e .
+
+EXPOSE 7860
+
+CMD ["uvicorn", "server.app:app", "--host", "0.0.0.0", "--port", "7860"]

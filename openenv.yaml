@@ -1,7 +1,14 @@
-# Placeholder — will be filled in Phase 7.
-# spec_version: 1
-# name: schemashift
-# type: space
-# runtime: fastapi
-# app: server.app:app
-# port: 7860
+spec_version: 1
+name: schemashift
+type: space
+runtime: fastapi
+app: server.app:app
+port: 7860
+
+tasks:
+  - id: E1_onboard_new_hire
+    difficulty: easy
+  - id: E2_meeting_invite_blast
+    difficulty: easy
+  - id: E3_customer_lookup
+    difficulty: easy
