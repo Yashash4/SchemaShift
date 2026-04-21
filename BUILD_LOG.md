@@ -219,65 +219,17 @@ Running log of everything built, tested, trained, and deployed. Append-only — 
 
 ## PHASES REMAINING
 
-- [x] Phase 8 — Env client + training skeleton
-- [x] Phase 9 — Baseline eval (heuristics + 3 LLMs + GPT-4o-mini)
-- [x] Phase 10 — HF Space deploy
 - [ ] Phase 11 — Medium scenarios (M1/M2/M3)
-- [ ] Phase 12 — Insurance video recording (2 videos: 60s + 2min)
+- [ ] Phase 12 — Insurance video recording (60s core cut + 2min full)
 - [ ] Phase 13 — Kaggle training runs (Stage 1 single account → Stage 2 parallelize)
 - [ ] Phase 14 — Pitch + blog + video
 - [ ] Phase 15 — Onsite Saturday-Sunday
 
 ---
 
-## TRAINING RUNS
+## TRAINING RUNS / EVAL RUNS — see TRAINING_LOG.md
 
-(Will be populated during Phase 13. Template for each run below.)
-
-### Run 1 — Account [N] — [Person] — [Date Time]
-- **Model:** Qwen 2.5 1.5B Instruct OR Qwen 2.5 Coder 1.5B Instruct
-- **Reward variant:** binary / shaped_total / shaped_total+procedural
-- **Scenario set:** deterministic / procedural
-- **LoRA config:** r=16, alpha=32, targets=[q_proj, k_proj, v_proj, o_proj, gate_proj, up_proj, down_proj]
-- **GRPO config:** lr=5e-6, num_generations=4, max_completion_length=1536, gradient_accumulation=4, max_steps=100
-- **Start time:**
-- **End time:**
-- **Steps completed:**
-- **First batch mean reward:**
-- **Final mean reward:**
-- **Delta:**
-- **Checkpoint HF Hub ID:**
-- **Eval E1 score:**
-- **Eval E2 score:**
-- **Eval E3 score:**
-- **Reward curve image:** `training_logs/run_N.png`
-- **Errors / stops:**
-- **Notes:**
-
----
-
-## EVAL RUNS
-
-(Will be populated during Phase 9. Template below.)
-
-### Eval [baseline_name] — [Date]
-- **Model:** e.g., naive_heuristic, policy_aware_heuristic, Qwen 2.5 7B, Llama 3.1 8B, GPT-4o-mini, Qwen 2.5 1.5B (trained)
-- **Seeds:** 5 per task
-- **E1_onboard_new_hire avg:**
-- **E2_meeting_invite_blast avg:**
-- **E3_customer_lookup avg:**
-- **Full raw scores table:**
-
-  | Task | Seed | Completion | DriftDetection | Adaptation | Efficiency | Shaped | Binary |
-  |------|------|------------|----------------|------------|------------|--------|--------|
-  | E1   | 0    |            |                |            |            |        |        |
-  | E1   | 1    |            |                |            |            |        |        |
-  | ...  |      |            |                |            |            |        |        |
-
-- **Failure examples:**
-  1. Action JSON + Response JSON
-  2. ...
-  3. ...
+All training runs (per-checkpoint evals, reward curves, config snapshots, iteration history) are logged in `TRAINING_LOG.md` — a dedicated append-only file with 7 structured sections. This separation keeps BUILD_LOG focused on build/phase tracking. For Phase 9 eval results, Phase 13 training data, and head-to-head comparison tables, see TRAINING_LOG.md.
 
 ---
 

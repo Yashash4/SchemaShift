@@ -117,6 +117,8 @@ Commentary: what was wrong
 
 A dumb policy that always calls the first endpoint of the first tool. Proves the environment cannot be trivially solved.
 
+**Partial data already collected:** See Section 3 / Eval 1 (3 seeds, local) and Eval 3 (3 seeds, production). Both runs returned 0.000 shaped / 0% binary across E1/E2/E3. For the final pitch table, need 5-seed production run in Phase 10+ sweep.
+
 - **Evaluated:** [DATE/TIME]
 - **Seeds:** 0, 1, 2, 3, 4
 
@@ -127,6 +129,8 @@ A dumb policy that always calls the first endpoint of the first tool. Proves the
 ### Baseline — policy_aware_heuristic
 
 A smarter rule-based policy: on 4xx/5xx response, call inspect_schema next. Upper bound for non-RL solutions.
+
+**Partial data already collected:** See Section 3 / Eval 2 (3 seeds, local) and Eval 3 (3 seeds, production). Both runs returned 0.348 overall mean_shaped / 66.67% binary. For the final pitch table, need 5-seed production run in Phase 10+ sweep.
 
 - **Evaluated:** [DATE/TIME]
 - **Seeds:** 0, 1, 2, 3, 4
