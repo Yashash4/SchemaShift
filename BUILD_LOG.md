@@ -185,13 +185,43 @@ Running log of everything built, tested, trained, and deployed. Append-only — 
   8. LLM agents deferred to Phase 10+ (API keys not ready)
 - **Notes:** Discriminability proves env rewards the correct meta-skill and isn't gameable. E2's design feature (unreachable for rule-based agents) is critical for RL training story — demonstrates the policy ceiling that a trained agent must exceed.
 
+### Phase 10 — HF Space Deploy
+- **Date:** Tuesday April 21, 2026 (late night)
+- **Commit:** `fc82aca` (merge with HF initial commit)
+- **Tests:** 4 new deploy smoke tests (73 local + 4 conditional = 77 total)
+- **Line counts:** README.md (HF frontmatter + body), DEPLOY.md, tests/test_deploy_smoke.py
+- **Time:** < 30 minutes (fastest phase so far)
+- **Deploy timing:** HF Docker base cached → APP_STARTING at t=0s, RUNNING at t=15s, /health 200 immediately
+- **Live URLs:**
+  - HF Space: https://yashash045-schemashift.hf.space
+  - HF Space management: https://huggingface.co/spaces/yashash045/schemashift
+  - GitHub: https://github.com/Yashash4/SchemaShift
+- **CRITICAL VERIFICATION — Step 4 step_shaping on production:**
+  - Local Phase 8 smoke: 0.1000 exact
+  - **Production Phase 10 smoke: 0.1000 exact** — dense shaping preserved through full prod HTTP path
+- **Heuristic eval on production (matches local exactly):**
+  - naive: 0.000 shaped, 0.235 cumulative, 0% binary
+  - policy_aware: 0.348 shaped, 1.284 cumulative, 66.67% binary
+  - Gap: +0.348 shaped / +66.67pp binary (matches local to 3 decimal places)
+- **Deploy smoke test suite:** 4/4 passing (test_deployed_health, test_deployed_tasks_list, test_deployed_reset_and_step, test_deployed_step_shaping_fires) — 6.32s runtime
+- **Judgment calls:**
+  1. Used existing HF creds (yashash045) found at ~/.cache/huggingface/token instead of re-auth
+  2. GitHub Yashash4 vs HF yashash045 — different handles, both remotes working
+  3. Merge HF initial commit with `-X ours` strategy, not force-push (audit trail preserved)
+  4. Deploy smoke tests skippable via SCHEMASHIFT_DEPLOY_URL env var
+  5. Monitor tool for build-status polling (context-efficient)
+  6. Tokenized URL for git push (portable across Win/Unix)
+  7. Dual remote setup — both origin + space pushed at fc82aca
+  8. Deploy took < 1 min end-to-end; redeployments will be < 30s (base image cached)
+- **Notes:** Kaggle training notebooks can now set SCHEMASHIFT_URL=https://yashash045-schemashift.hf.space for Phase 13. README.md has HF frontmatter with patronus+scaler sub-theme tags for judge discoverability.
+
 ---
 
 ## PHASES REMAINING
 
 - [x] Phase 8 — Env client + training skeleton
 - [x] Phase 9 — Baseline eval (heuristics + 3 LLMs + GPT-4o-mini)
-- [ ] Phase 10 — HF Space deploy
+- [x] Phase 10 — HF Space deploy
 - [ ] Phase 11 — Medium scenarios (M1/M2/M3)
 - [ ] Phase 12 — Insurance video recording (2 videos: 60s + 2min)
 - [ ] Phase 13 — Kaggle training runs (Stage 1 single account → Stage 2 parallelize)

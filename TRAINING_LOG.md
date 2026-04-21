@@ -398,6 +398,22 @@ Every eval.py invocation gets one entry here, even if it was just to sanity-chec
 
 ---
 
+### Eval 3 — policy_aware_heuristic — production HF Space — Tuesday April 21, 2026 23:31 IST
+
+- **Target:** policy_aware_heuristic against https://yashash045-schemashift.hf.space
+- **Seeds:** 0, 1, 2
+- **Aggregates:**
+  - E1 mean shaped: 0.522 (binary_rate=100%)
+  - E2 mean shaped: 0.000 (binary_rate=0% — ceiling: rule-based can't send 3 emails within 6-step budget after drift recovery)
+  - E3 mean shaped: 0.522 (binary_rate=100%)
+  - **Overall mean_shaped: 0.348**
+  - **Overall cumulative reward: 1.284**
+  - **Overall binary rate: 66.67%**
+- **Cost:** $0 (HF Space CPU-basic free tier + local client)
+- **Commentary:** Production matches local numbers to 3 decimal places. Env is deterministic and HF deploy preserves all scoring. **Critical pitch milestone: dense shaping (step_shaping=0.1000) survives production HTTP path verified independently via training/grpo_smoke.py.** Kaggle training in Phase 13 can now target this URL with confidence that shaped rewards propagate correctly end-to-end.
+
+---
+
 ## 4. HEAD-TO-HEAD COMPARISONS (for blog, pitch, judges)
 
 These tables get built progressively as runs complete. They ARE your pitch data.
