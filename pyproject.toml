@@ -1,0 +1,36 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "schemashift"
+version = "0.1.0"
+description = "OpenEnv RL environment for adaptive tool use under API schema drift."
+readme = "README.md"
+requires-python = ">=3.10"
+authors = [
+    { name = "Yashash Sheshagiri" },
+    { name = "Gajanand V Dhayagode" },
+    { name = "Likith B S" },
+]
+license = { text = "Apache-2.0" }
+dependencies = [
+    "fastapi>=0.110",
+    "uvicorn>=0.27",
+    "pydantic>=2.6",
+    "httpx>=0.27",
+    "python-dotenv>=1.0",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=8.0"]
+ui = ["gradio>=4.20"]
+eval = ["openai>=1.30"]
+
+[tool.setuptools]
+packages = ["schemashift", "schemashift.tools", "schemashift.server", "schemashift.training"]
+package-dir = {"schemashift" = "."}
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."]
