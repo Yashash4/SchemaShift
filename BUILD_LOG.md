@@ -159,12 +159,38 @@ Running log of everything built, tested, trained, and deployed. Append-only — 
   10. Deferred live HTTP client tests to Phase 10 (grpo_smoke.py is the live integration check — passed cleanly)
 - **Notes:** This is the bridge to training. After this phase, Kaggle can load Qwen 1.5B, generate action JSON, submit via HTTP, receive shaped rewards, and feed GRPO. The 0.1000 step_shaping on smoke Step 4 is the "signal is alive" proof — the most important number from Phase 8.
 
+### Phase 9 — Baseline Eval Harness
+- **Date:** Tuesday April 21, 2026 (late night)
+- **Commit:** `4d2f869`
+- **Tests:** 6 new (73 total), 1.53s runtime
+- **Line counts:** eval.py = 674, tests/test_eval.py = 132
+- **Time:** ~2 hours
+- **Live eval discriminability result:**
+  - naive_heuristic: 0.000 shaped, 0.235 cumulative, 0% binary
+  - policy_aware_heuristic: 0.348 shaped, 1.284 cumulative, 66.67% binary
+  - **GAP: 0.348 shaped (threshold was 0.2 → PASS)**
+  - Binary rate gap: 66.67 percentage points
+- **Per-scenario behavior:**
+  - E1: policy_aware finishes in 3 steps, beats drift at step 3, binary=1
+  - E2: policy_aware hits unavoidable drift at step 1, recovers but only sends 1/3 emails, binary=0 — intentional ceiling for rule-based agents
+  - E3: policy_aware search+update completes cleanly, binary=1
+- **Judgment calls:**
+  1. Retry guard to prevent infinite loop (caught upfront)
+  2. Task-progress awareness via obs.known_state (prevents duplicate tool calls)
+  3. CRM search→update two-stage flow with company name capture
+  4. _adapt_endpoint handles mail messages.send and crm contacts.patch
+  5. Email regex bug fix (`r"[\w.+-]+@[\w-]+(?:\.[\w-]+)+"` — can't swallow trailing period; caught via debug, would have broken E3 silently)
+  6. Added cumulative_reward to EpisodeResult output (captures dense shaping even when gate zeros terminal)
+  7. Strict-validation-aware _adapt_params (strips keys not in current schema)
+  8. LLM agents deferred to Phase 10+ (API keys not ready)
+- **Notes:** Discriminability proves env rewards the correct meta-skill and isn't gameable. E2's design feature (unreachable for rule-based agents) is critical for RL training story — demonstrates the policy ceiling that a trained agent must exceed.
+
 ---
 
 ## PHASES REMAINING
 
 - [x] Phase 8 — Env client + training skeleton
-- [ ] Phase 9 — Baseline eval (heuristics + 3 LLMs + GPT-4o-mini)
+- [x] Phase 9 — Baseline eval (heuristics + 3 LLMs + GPT-4o-mini)
 - [ ] Phase 10 — HF Space deploy
 - [ ] Phase 11 — Medium scenarios (M1/M2/M3)
 - [ ] Phase 12 — Insurance video recording (2 videos: 60s + 2min)

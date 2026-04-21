@@ -359,6 +359,45 @@ Every eval.py invocation gets one entry here, even if it was just to sanity-chec
 
 ---
 
+### Eval 1 — naive_heuristic — Tuesday April 21, 2026 (late night, local server)
+
+- **Target:** naive_heuristic (floor baseline)
+- **Seeds:** 0, 1, 2
+- **Scenarios:** E1, E2, E3
+- **Aggregates:**
+  - E1 mean shaped: 0.000 (binary_rate=0%)
+  - E2 mean shaped: 0.000 (binary_rate=0%)
+  - E3 mean shaped: 0.000 (binary_rate=0%)
+  - **Overall mean_shaped: 0.000**
+  - **Overall cumulative reward: 0.235**
+  - **Overall binary rate: 0.00%**
+- **3 failure examples:** Always calls first endpoint of first tool with empty params → 400 missing_required_params → completes after 3 steps without adaptation. Drift goes undetected in all 9 episodes.
+- **Cost:** $0 (local env, no API)
+- **Commentary:** Floor baseline. Proves env cannot be trivially solved. Zero shaped reward across all 9 episodes. Small non-zero cumulative (0.235) comes from efficiency rubric crediting unused step budget — not from any real task progress.
+
+---
+
+### Eval 2 — policy_aware_heuristic — Tuesday April 21, 2026 (late night, local server)
+
+- **Target:** policy_aware_heuristic (ceiling for non-RL solutions)
+- **Seeds:** 0, 1, 2
+- **Scenarios:** E1, E2, E3
+- **Aggregates:**
+  - E1 mean shaped: 0.522 (binary_rate=100%)
+  - E2 mean shaped: 0.000 (binary_rate=0% — unreachable by rule-based agent within step budget)
+  - E3 mean shaped: 0.522 (binary_rate=100%)
+  - **Overall mean_shaped: 0.348**
+  - **Overall cumulative reward: 1.284**
+  - **Overall binary rate: 66.67%**
+- **Behavior observed:**
+  - E1: heuristic executes mail send + calendar create in 3 steps, narrowly beating the drift fired at step 3. Completion GT met on both tools.
+  - E2: drift fires step 1 (unavoidable), heuristic recovers via inspect→report→retry, sends 1 of 3 required emails. Remaining step budget insufficient for 2 more sends.
+  - E3: search captures contact_id + company from response. Step 2 update_contact succeeds (drift transparent since field_rename doesn't affect email-less params). Summary mentions "Globex Industries" → complete_summary_mentions_company GT satisfied.
+- **Cost:** $0 (local env, no API)
+- **Commentary:** Discriminability vs naive: **+0.348 shaped, +66.67 percentage points binary.** Env has proven learnable-but-nontrivial gap. E2's unreachable-for-rules property is the RL-advantage test — a trained policy that plans ahead across multiple sends should exceed this ceiling. E2 is the scenario that will drive the pitch's "small model beats frontier" claim.
+
+---
+
 ## 4. HEAD-TO-HEAD COMPARISONS (for blog, pitch, judges)
 
 These tables get built progressively as runs complete. They ARE your pitch data.
