@@ -445,6 +445,117 @@ Every eval.py invocation gets one entry here, even if it was just to sanity-chec
 
 ---
 
+### Eval 6 — naive_heuristic — 5 seeds × 6 scenarios — production — Wednesday April 22, 2026 (early morning)
+
+- **Target:** naive_heuristic on E1/E2/E3/M1/M2/M3 against https://yashash045-schemashift.hf.space
+- **Seeds:** 0, 1, 2, 3, 4 (30 episodes total)
+- **Results JSON:** `eval_results/naive_5seed_full.json`
+- **Per-seed table (all seeds identical — env is deterministic):**
+
+| Task | Seed | Compl | Drift | Adapt | Effic | Shaped | Cumul | Binary |
+|------|------|-------|-------|-------|-------|--------|-------|--------|
+| E1_onboard_new_hire | 0 | 0.000 | 0.000 | 0.000 | 0.812 | 0.000 | 0.222 | 0 |
+| E1_onboard_new_hire | 1 | 0.000 | 0.000 | 0.000 | 0.812 | 0.000 | 0.222 | 0 |
+| E1_onboard_new_hire | 2 | 0.000 | 0.000 | 0.000 | 0.812 | 0.000 | 0.222 | 0 |
+| E1_onboard_new_hire | 3 | 0.000 | 0.000 | 0.000 | 0.812 | 0.000 | 0.222 | 0 |
+| E1_onboard_new_hire | 4 | 0.000 | 0.000 | 0.000 | 0.812 | 0.000 | 0.222 | 0 |
+| E2_meeting_invite_blast | 0 | 0.000 | 0.000 | 0.000 | 0.750 | 0.000 | 0.213 | 0 |
+| E2_meeting_invite_blast | 1 | 0.000 | 0.000 | 0.000 | 0.750 | 0.000 | 0.213 | 0 |
+| E2_meeting_invite_blast | 2 | 0.000 | 0.000 | 0.000 | 0.750 | 0.000 | 0.213 | 0 |
+| E2_meeting_invite_blast | 3 | 0.000 | 0.000 | 0.000 | 0.750 | 0.000 | 0.213 | 0 |
+| E2_meeting_invite_blast | 4 | 0.000 | 0.000 | 0.000 | 0.750 | 0.000 | 0.213 | 0 |
+| E3_customer_lookup | 0 | 0.000 | 0.000 | 0.000 | 0.812 | 0.000 | 0.272 | 0 |
+| E3_customer_lookup | 1 | 0.000 | 0.000 | 0.000 | 0.812 | 0.000 | 0.272 | 0 |
+| E3_customer_lookup | 2 | 0.000 | 0.000 | 0.000 | 0.812 | 0.000 | 0.272 | 0 |
+| E3_customer_lookup | 3 | 0.000 | 0.000 | 0.000 | 0.812 | 0.000 | 0.272 | 0 |
+| E3_customer_lookup | 4 | 0.000 | 0.000 | 0.000 | 0.812 | 0.000 | 0.272 | 0 |
+| M1_customer_escalation | 0 | 0.000 | 0.000 | 0.000 | 0.875 | 0.000 | 0.231 | 0 |
+| M1_customer_escalation | 1 | 0.000 | 0.000 | 0.000 | 0.875 | 0.000 | 0.231 | 0 |
+| M1_customer_escalation | 2 | 0.000 | 0.000 | 0.000 | 0.875 | 0.000 | 0.231 | 0 |
+| M1_customer_escalation | 3 | 0.000 | 0.000 | 0.000 | 0.875 | 0.000 | 0.231 | 0 |
+| M1_customer_escalation | 4 | 0.000 | 0.000 | 0.000 | 0.875 | 0.000 | 0.231 | 0 |
+| M2_weekly_report | 0 | 0.000 | 0.000 | 0.000 | 0.850 | 0.000 | 0.227 | 0 |
+| M2_weekly_report | 1 | 0.000 | 0.000 | 0.000 | 0.850 | 0.000 | 0.227 | 0 |
+| M2_weekly_report | 2 | 0.000 | 0.000 | 0.000 | 0.850 | 0.000 | 0.227 | 0 |
+| M2_weekly_report | 3 | 0.000 | 0.000 | 0.000 | 0.850 | 0.000 | 0.227 | 0 |
+| M2_weekly_report | 4 | 0.000 | 0.000 | 0.000 | 0.850 | 0.000 | 0.227 | 0 |
+| M3_event_cleanup | 0 | 0.000 | 0.000 | 0.000 | 0.875 | 0.000 | 0.231 | 0 |
+| M3_event_cleanup | 1 | 0.000 | 0.000 | 0.000 | 0.875 | 0.000 | 0.231 | 0 |
+| M3_event_cleanup | 2 | 0.000 | 0.000 | 0.000 | 0.875 | 0.000 | 0.231 | 0 |
+| M3_event_cleanup | 3 | 0.000 | 0.000 | 0.000 | 0.875 | 0.000 | 0.231 | 0 |
+| M3_event_cleanup | 4 | 0.000 | 0.000 | 0.000 | 0.875 | 0.000 | 0.231 | 0 |
+
+- **Aggregates:**
+  - E1 mean shaped: 0.000 (binary=0%), cumul=0.222
+  - E2 mean shaped: 0.000 (binary=0%), cumul=0.213
+  - E3 mean shaped: 0.000 (binary=0%), cumul=0.272
+  - M1 mean shaped: 0.000 (binary=0%), cumul=0.231
+  - M2 mean shaped: 0.000 (binary=0%), cumul=0.227
+  - M3 mean shaped: 0.000 (binary=0%), cumul=0.231
+  - **Overall mean_shaped: 0.000**
+  - **Overall cumulative reward: 0.233**
+  - **Overall binary rate: 0.00%**
+- **Cost:** $0 (prod HF Space CPU-basic + local client, ~1.3s per episode)
+- **Commentary:** Definitive floor baseline with 5 seeds × 6 scenarios on production. Zero shaped reward and zero binary on every single episode across both tiers. Low non-zero cumulative (0.21–0.27 per scenario) is pure efficiency-rubric credit from unused step budget. This is the "before" number the pitch quotes.
+
+---
+
+### Eval 7 — policy_aware_heuristic — 5 seeds × 6 scenarios — production — Wednesday April 22, 2026 (early morning)
+
+- **Target:** policy_aware_heuristic on E1/E2/E3/M1/M2/M3 against https://yashash045-schemashift.hf.space
+- **Seeds:** 0, 1, 2, 3, 4 (30 episodes total)
+- **Results JSON:** `eval_results/policy_aware_5seed_full.json`
+- **Per-seed table (all seeds identical — env is deterministic):**
+
+| Task | Seed | Compl | Drift | Adapt | Effic | Shaped | Cumul | Binary |
+|------|------|-------|-------|-------|-------|--------|-------|--------|
+| E1_onboard_new_hire | 0 | 1.000 | 0.000 | 0.000 | 0.812 | 0.522 | 1.434 | 1 |
+| E1_onboard_new_hire | 1 | 1.000 | 0.000 | 0.000 | 0.812 | 0.522 | 1.434 | 1 |
+| E1_onboard_new_hire | 2 | 1.000 | 0.000 | 0.000 | 0.812 | 0.522 | 1.434 | 1 |
+| E1_onboard_new_hire | 3 | 1.000 | 0.000 | 0.000 | 0.812 | 0.522 | 1.434 | 1 |
+| E1_onboard_new_hire | 4 | 1.000 | 0.000 | 0.000 | 0.812 | 0.522 | 1.434 | 1 |
+| E2_meeting_invite_blast | 0 | 0.000 | 1.000 | 1.000 | 0.583 | 0.000 | 1.425 | 0 |
+| E2_meeting_invite_blast | 1 | 0.000 | 1.000 | 1.000 | 0.583 | 0.000 | 1.425 | 0 |
+| E2_meeting_invite_blast | 2 | 0.000 | 1.000 | 1.000 | 0.583 | 0.000 | 1.425 | 0 |
+| E2_meeting_invite_blast | 3 | 0.000 | 1.000 | 1.000 | 0.583 | 0.000 | 1.425 | 0 |
+| E2_meeting_invite_blast | 4 | 0.000 | 1.000 | 1.000 | 0.583 | 0.000 | 1.425 | 0 |
+| E3_customer_lookup | 0 | 1.000 | 0.000 | 0.000 | 0.812 | 0.522 | 0.994 | 1 |
+| E3_customer_lookup | 1 | 1.000 | 0.000 | 0.000 | 0.812 | 0.522 | 0.994 | 1 |
+| E3_customer_lookup | 2 | 1.000 | 0.000 | 0.000 | 0.812 | 0.522 | 0.994 | 1 |
+| E3_customer_lookup | 3 | 1.000 | 0.000 | 0.000 | 0.812 | 0.522 | 0.994 | 1 |
+| E3_customer_lookup | 4 | 1.000 | 0.000 | 0.000 | 0.812 | 0.522 | 0.994 | 1 |
+| M1_customer_escalation | 0 | 0.500 | 0.500 | 0.000 | 0.708 | 0.000 | 2.510 | 0 |
+| M1_customer_escalation | 1 | 0.500 | 0.500 | 0.000 | 0.708 | 0.000 | 2.510 | 0 |
+| M1_customer_escalation | 2 | 0.500 | 0.500 | 0.000 | 0.708 | 0.000 | 2.510 | 0 |
+| M1_customer_escalation | 3 | 0.500 | 0.500 | 0.000 | 0.708 | 0.000 | 2.510 | 0 |
+| M1_customer_escalation | 4 | 0.500 | 0.500 | 0.000 | 0.708 | 0.000 | 2.510 | 0 |
+| M2_weekly_report | 0 | 0.250 | 0.000 | 1.000 | 0.500 | 0.000 | 3.013 | 0 |
+| M2_weekly_report | 1 | 0.250 | 0.000 | 1.000 | 0.500 | 0.000 | 3.013 | 0 |
+| M2_weekly_report | 2 | 0.250 | 0.000 | 1.000 | 0.500 | 0.000 | 3.013 | 0 |
+| M2_weekly_report | 3 | 0.250 | 0.000 | 1.000 | 0.500 | 0.000 | 3.013 | 0 |
+| M2_weekly_report | 4 | 0.250 | 0.000 | 1.000 | 0.500 | 0.000 | 3.013 | 0 |
+| M3_event_cleanup | 0 | 0.200 | 0.000 | 0.000 | 0.875 | 0.000 | 0.441 | 0 |
+| M3_event_cleanup | 1 | 0.200 | 0.000 | 0.000 | 0.875 | 0.000 | 0.441 | 0 |
+| M3_event_cleanup | 2 | 0.200 | 0.000 | 0.000 | 0.875 | 0.000 | 0.441 | 0 |
+| M3_event_cleanup | 3 | 0.200 | 0.000 | 0.000 | 0.875 | 0.000 | 0.441 | 0 |
+| M3_event_cleanup | 4 | 0.200 | 0.000 | 0.000 | 0.875 | 0.000 | 0.441 | 0 |
+
+- **Aggregates:**
+  - E1 mean shaped: 0.522 (binary=100%), cumul=1.434
+  - E2 mean shaped: 0.000 (binary=0%), cumul=1.425 — unreachable for rule-based (intentional ceiling)
+  - E3 mean shaped: 0.522 (binary=100%), cumul=0.994
+  - M1 mean shaped: 0.000 (binary=0%), cumul=2.510
+  - M2 mean shaped: 0.000 (binary=0%), cumul=3.013
+  - M3 mean shaped: 0.000 (binary=0%), cumul=0.441
+  - **Overall mean_shaped: 0.174** (only E1 and E3 binary=1 passed; 4 of 6 scenarios gate-zeroed)
+  - **Overall cumulative reward: 1.636** (7× naive's 0.233 — dense shaping fires consistently)
+  - **Overall binary rate: 33.33%** (10 of 30 episodes binary=1, all E1 and E3)
+- **Cost:** $0 (prod HF Space CPU-basic + local client, ~1.3s per episode)
+- **Commentary:** Rule-based ceiling with 5-seed stability. Discriminability vs naive: **+0.174 shaped, +1.403 cumul, +33.33pp binary**. The 33.33% binary rate (E1 + E3 only) is the rule-based ceiling that trained RL must exceed. E2's binary=0 is the "requires multi-step planning" signal. M1/M2/M3 binary=0 is the "requires language understanding beyond keyword matching" signal. Together these 4 gate-zeroed scenarios are where the pitch lives: a trained 1.5B model that handles any of them proves RL learned something beyond regex.
+- **Pitch claim positioning:** "Our 1.5B model improved from X.XX to Y.YY shaped reward on E2/M-tier scenarios where rule-based agents score 0.000 regardless of effort" — X will be untrained Qwen 1.5B shaped (TBD after Run 1), Y will be trained checkpoint shaped.
+
+---
+
 ## 4. HEAD-TO-HEAD COMPARISONS (for blog, pitch, judges)
 
 These tables get built progressively as runs complete. They ARE your pitch data.
