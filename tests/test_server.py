@@ -38,15 +38,18 @@ def test_tasks_endpoint(client) -> None:
     r = client.get("/tasks")
     assert r.status_code == 200
     body = r.json()
-    assert body["count"] == 3
+    assert body["count"] == 6
     task_ids = {t["task_id"] for t in body["tasks"]}
     assert task_ids == {
         "E1_onboard_new_hire",
         "E2_meeting_invite_blast",
         "E3_customer_lookup",
+        "M1_customer_escalation",
+        "M2_weekly_report",
+        "M3_event_cleanup",
     }
     for t in body["tasks"]:
-        assert t["difficulty"] == "easy"
+        assert t["difficulty"] in ("easy", "medium")
         assert isinstance(t["required_tools"], list)
 
 

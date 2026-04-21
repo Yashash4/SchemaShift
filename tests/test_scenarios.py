@@ -18,12 +18,42 @@ REQUIRED_KEYS = {
 }
 
 
-def test_all_three_scenarios_present() -> None:
+def test_all_scenarios_present() -> None:
     assert set(SCENARIOS.keys()) == {
         "E1_onboard_new_hire",
         "E2_meeting_invite_blast",
         "E3_customer_lookup",
+        "M1_customer_escalation",
+        "M2_weekly_report",
+        "M3_event_cleanup",
     }
+
+
+def test_medium_scenarios_present() -> None:
+    for task_id in ("M1_customer_escalation", "M2_weekly_report", "M3_event_cleanup"):
+        assert task_id in SCENARIOS, f"{task_id} missing from SCENARIOS"
+        assert SCENARIOS[task_id]["difficulty"] == "medium"
+
+
+def test_medium_scenarios_multi_drift() -> None:
+    for task_id in ("M1_customer_escalation", "M2_weekly_report", "M3_event_cleanup"):
+        plan = SCENARIOS[task_id]["drift_plan"]
+        assert len(plan) == 2, f"{task_id}: expected 2 drifts, got {len(plan)}"
+
+
+def test_m3_same_tool_multi_drift() -> None:
+    """M3 is the judgment-call-#2 stress test: both drifts target calendar."""
+    plan = SCENARIOS["M3_event_cleanup"]["drift_plan"]
+    tools = [d.tool for d in plan]
+    assert tools == ["calendar", "calendar"], (
+        f"M3 drifts must both target calendar, got {tools}"
+    )
+
+
+def test_medium_required_tools() -> None:
+    assert SCENARIOS["M1_customer_escalation"]["required_tools"] == ["mail", "calendar", "crm"]
+    assert SCENARIOS["M2_weekly_report"]["required_tools"] == ["mail", "calendar", "crm"]
+    assert SCENARIOS["M3_event_cleanup"]["required_tools"] == ["mail", "calendar"]
 
 
 def test_each_scenario_has_required_fields() -> None:

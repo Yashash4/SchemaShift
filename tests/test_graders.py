@@ -126,6 +126,77 @@ def test_adaptation_rubric_success() -> None:
     assert details["opportunities"] == 1
 
 
+def test_adaptation_rubric_multi_drift_same_tool() -> None:
+    """M3-style stress test: two drifts on the same tool (calendar).
+
+    History:
+      step 2 — call_tool calendar.delete_event → 410 (post-Drift-A tool_removal)
+      step 5 — call_tool calendar.create_event with attendees → 400 (post-Drift-B field_rename)
+      step 7 — retry_with_variant calendar.create_event with participants → 200 success
+
+    Expected rubric behavior (per Phase 5 judgment call #2):
+      - Drift A (fires_at_step=2): first post-drift calendar call = step 5 (failed). opp=1, adapted=0.
+      - Drift B (fires_at_step=5): first post-drift calendar call = step 7 (succeeded). opp=1, adapted=1.
+      - Score = 1/2 = 0.5.
+
+    Documents intentional denominator behavior: partial credit for partial adaptation.
+    Dense step_shaping (+0.20 for successful retry after failure) catches the step 7
+    recovery independently, so the rubric staying conservative is acceptable.
+    """
+    drifts = [
+        DriftEvent(
+            tool="calendar", endpoint="delete_event", kind="tool_removal",
+            fires_at_step=2, details={}, detected_by_agent=True,
+        ),
+        DriftEvent(
+            tool="calendar", endpoint="create_event", kind="field_rename",
+            fires_at_step=5, details={}, detected_by_agent=True,
+        ),
+    ]
+    history = [
+        HistoryStep(
+            step=2,
+            action=Action(
+                type="call_tool",
+                tool_call=ToolCallParams(
+                    tool="calendar", endpoint="delete_event",
+                    params={"event_id": "evt_2"},
+                ),
+            ),
+            response=ToolResponse(ok=False, status=410, error="removed"),
+        ),
+        HistoryStep(
+            step=5,
+            action=Action(
+                type="call_tool",
+                tool_call=ToolCallParams(
+                    tool="calendar", endpoint="create_event",
+                    params={"title": "x", "start": "t1", "end": "t2",
+                            "attendees": ["a@x.com"]},
+                ),
+            ),
+            response=ToolResponse(ok=False, status=400, error="missing required"),
+        ),
+        HistoryStep(
+            step=7,
+            action=Action(
+                type="retry_with_variant",
+                retry=RetryParams(
+                    tool="calendar", endpoint="create_event",
+                    params={"title": "x", "start": "t1", "end": "t2",
+                            "participants": [{"email": "a@x.com", "role": "required"}]},
+                ),
+            ),
+            response=ToolResponse(ok=True, status=200, body={"event_id": "evt_3"}),
+        ),
+    ]
+    s = _state_with(step=7, drift_plan=drifts, history=history)
+    _, val, details = AdaptationRubric().score(s)
+    assert val == 0.5, f"Expected 0.5, got {val}"
+    assert details["adapted"] == 1
+    assert details["opportunities"] == 2
+
+
 def test_adaptation_rubric_no_post_drift_calls() -> None:
     drift = DriftEvent(
         tool="calendar", endpoint="create_event", kind="field_rename",

@@ -283,6 +283,12 @@ class SchemaShiftEnvironment:
                     st["mail.last_subject_contains_welcome"] = True
                 if "all-hands" in subject or "all hands" in subject:
                     st["mail.last_subject_contains_allhands"] = True
+                if "priority support" in subject:
+                    st["mail.last_subject_contains_priority_support"] = True
+                if "weekly" in subject:
+                    st["mail.last_subject_contains_weekly"] = True
+                if "calendar updated" in subject:
+                    st["mail.last_subject_contains_calendar_updated"] = True
                 recipients: list[str] = st.get("mail.all_recipients", [])
                 if sent_to and sent_to not in recipients:
                     recipients.append(sent_to)
@@ -304,8 +310,29 @@ class SchemaShiftEnvironment:
                     elif isinstance(a, dict):
                         emails.append(a.get("email", ""))
                 st["calendar.last_event_attendees"] = emails
-                if "priya@company.com" in emails and "alex@company.com" in emails:
+                # Recognised attendee pairs (E1 + M1 share this key by design).
+                priya_alex = (
+                    "priya@company.com" in emails and "alex@company.com" in emails
+                )
+                bob_alex = (
+                    "bob@customer.com" in emails and "alex@company.com" in emails
+                )
+                if priya_alex or bob_alex:
                     st["calendar.last_event_has_both_attendees"] = True
+                if "sarah@company.com" in emails and "mike@company.com" in emails:
+                    st["calendar.last_event_has_both_sales_leads"] = True
+                # M3: Friday Wrap-up event counter
+                title = str(body.get("title") or params.get("title") or "").lower()
+                if "friday wrap-up" in title:
+                    st["calendar.events_count_new_friday_wrapup"] = (
+                        st.get("calendar.events_count_new_friday_wrapup", 0) + 1
+                    )
+            elif endpoint == "update_event":
+                # M3: track per-event status transitions (cancellations)
+                event_id = params.get("event_id", "")
+                status = params.get("status")
+                if event_id and status:
+                    st[f"calendar.{event_id}_status"] = status
 
         # CRM ─────────────────────────────────────────────────────
         if tool == "crm":
