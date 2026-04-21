@@ -40,6 +40,13 @@ class BaseTool:
                 error=f"Endpoint '{endpoint}' is no longer available on {self.name}.",
             )
         schema = self.active_schemas[endpoint]
+        unknown = [p for p in params if p not in schema.params]
+        if unknown:
+            return ToolResponse(
+                ok=False,
+                status=400,
+                error=f"Unknown params on {endpoint}: {unknown}",
+            )
         missing = [p for p in schema.required if p not in params]
         if missing:
             return ToolResponse(
