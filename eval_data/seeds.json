@@ -1,1 +1,5 @@
-{}
+{
+  "default_seeds": [0, 1, 2, 3, 4],
+  "extended_seeds": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+  "notes": "Default 5 seeds per task for dev eval. Use extended 10 for final pitch eval. Each seed is passed to env.reset(task_id, seed=X) — currently the env does not use the seed for randomness (scenarios are deterministic), but seeds are preserved for reproducibility and future procedural runs."
+}
