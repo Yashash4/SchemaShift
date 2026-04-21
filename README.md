@@ -9,4 +9,4 @@ RL environment where a workflow agent completes multi-step SaaS admin tasks acro
 
 ## Status
 
-Scaffolding (Phase 0). See `SchemaShift_Phase_Plan.md` for build phases.
+Phase 8 complete. 67 tests passing. Environment + HTTP server + client + training skeleton ready. Next: baseline eval (Phase 9), HF Space deploy (Phase 10), medium scenarios (Phase 11), insurance video (Phase 12), Kaggle training runs (Phase 13).

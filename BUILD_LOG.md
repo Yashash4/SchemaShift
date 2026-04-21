@@ -140,16 +140,30 @@ Running log of everything built, tested, trained, and deployed. Append-only — 
 - **Notes:** Endpoints: /, /health, /reset, /step, /state, /tasks, /grader. Port 7860 for HF Spaces compatibility.
 
 ### Phase 8 — Env Client + Training Skeleton
-- **Status:** NOT YET STARTED
-- **Assigned to:** Yashash (lead) with Gajanand reviewing Kaggle notebook
-- **Expected time:** ~2-2.5 hours
-- (To be filled in on completion)
+- **Date:** Tuesday April 21, 2026 (late evening)
+- **Commit:** `2464e9e`
+- **Tests:** 4 new (67 total), 1.52s runtime
+- **Line counts:** client.py = 91, training/grpo_smoke.py = 143, training/grpo_kaggle.ipynb = 10 cells (1 markdown + 9 code), tests/test_client.py = 70
+- **Smoke test result:** Step 4 step_shaping = 0.1000 ✅ EXACTLY as expected (dense shaping preserved across HTTP roundtrip: env → JSON serialize → HTTP → JSON deserialize → client → caller)
+- **Time:** ~90 min
+- **Judgment calls:**
+  1. Brace-balanced JSON extractor in `parse_completion_to_actions` (depth-counting; handles arbitrarily nested JSON, unlike flat regex which would miss `call_tool.tool_call.params` structures)
+  2. Mocked httpx tests over live TestClient (faster, no real network, no port conflicts; live integration covered by grpo_smoke.py)
+  3. Notebook uses explicit Cell 4 / Cell 5 / Cell 6 separation (variant block uncommenting is cleaner than runtime flags — one account owner toggles exactly one block)
+  4. Smoke test returns exit code 2 (not 1) when step_shaping is wrong, distinguishing from "server unreachable" exit 1
+  5. Model name in Cell 4 left as Qwen 2.5 1.5B Instruct (Account 3 Coder ablation is documented as a manual edit, not conditional code)
+  6. Procedural drift scheduler lives in its own Cell 6 (Account 3 rebuilds dataset each ~25 steps without editing reward_fn)
+  7. GRPO `hub_model_id` uses `$HF_USERNAME` env var fallback to `Yashash4` (each account member pushes to their own HF namespace — prevents checkpoint collisions)
+  8. Notebook Cell 3 uses `git clone || git pull` (idempotent on warm Kaggle sessions)
+  9. Client tests mock `_client.get/post` directly, not `httpx.Client` (surgical, exercises same code path runtime hits)
+  10. Deferred live HTTP client tests to Phase 10 (grpo_smoke.py is the live integration check — passed cleanly)
+- **Notes:** This is the bridge to training. After this phase, Kaggle can load Qwen 1.5B, generate action JSON, submit via HTTP, receive shaped rewards, and feed GRPO. The 0.1000 step_shaping on smoke Step 4 is the "signal is alive" proof — the most important number from Phase 8.
 
 ---
 
 ## PHASES REMAINING
 
-- [ ] Phase 8 — Env client + training skeleton
+- [x] Phase 8 — Env client + training skeleton
 - [ ] Phase 9 — Baseline eval (heuristics + 3 LLMs + GPT-4o-mini)
 - [ ] Phase 10 — HF Space deploy
 - [ ] Phase 11 — Medium scenarios (M1/M2/M3)
