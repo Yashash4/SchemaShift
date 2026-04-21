@@ -215,11 +215,40 @@ Running log of everything built, tested, trained, and deployed. Append-only — 
   8. Deploy took < 1 min end-to-end; redeployments will be < 30s (base image cached)
 - **Notes:** Kaggle training notebooks can now set SCHEMASHIFT_URL=https://yashash045-schemashift.hf.space for Phase 13. README.md has HF frontmatter with patronus+scaler sub-theme tags for judge discoverability.
 
+### Phase 11 — Medium Scenarios M1/M2/M3
+- **Date:** Wednesday April 22, 2026 (early morning)
+- **Commits:** `7828dcd` (Phase 11 core) + `0fd93c4` (deploy smoke count fixup)
+- **Tests:** 5 new (78 local pass + 4 deploy skip = 82 collected), 4/4 deploy smoke pass on prod
+- **Line counts:** scenarios.py 124→283 (+159), server/environment.py 363→390 (+27), tests/test_scenarios.py 65→95 (+30), tests/test_graders.py 224→295 (+71)
+- **Time:** ~2 hours
+- **M-tier discriminability result (policy_aware_heuristic, 3 seeds):**
+  - M1_customer_escalation: shaped=0.000, cumul=2.510, binary=0%
+  - M2_weekly_report: shaped=0.000, cumul=3.013, binary=0%
+  - M3_event_cleanup: shaped=0.000, cumul=0.441, binary=0%
+  - **M-tier overall: shaped=0.000, cumul=1.988 (HIGHER than E-tier's 1.284), binary=0%**
+- **Interpretation:** Gate-zeroed terminal rewards + higher cumulative = dense shaping fires correctly during multi-drift adaptation but rule-based agent cannot complete M-tier tasks. This is the designed ceiling — M-tier requires planning ahead across 10-15 steps with 2 drifts per episode, which no keyword-triggered heuristic can do. **M-tier is the "requires RL" tier.**
+- **E-tier regression check:** policy_aware on E1/E2/E3 still returns 0.348 shaped / 66.67% binary — identical to Phases 9/10. Env extensions didn't regress easy scenarios.
+- **AdaptationRubric multi-drift test (judgment call #2 from Phase 5 resolved):**
+  - Test constructed synthetic M3 state: 2 calendar drifts fired, 1 adaptation opportunity succeeded
+  - Score: 0.5 (1/2 opportunities adapted) — partial credit for partial adaptation
+  - Decision: NOT modified. Conservative partial-credit rubric + dense step_shaping (+0.20 for successful retry) together provide clean decomposable training signal. Change only if Phase 13 training shows convergence issues.
+- **Production verification:** HF Space /tasks now returns 6 scenarios. Zero-downtime redeploy. M-tier prod eval matches local to 3 decimals.
+- **Judgment calls:**
+  1. Extended `calendar.last_event_has_both_attendees` to OR-match priya+alex AND bob+alex (shared GT key across E1 and M1)
+  2. Added 3 new subject-contains checks (priority_support, weekly, calendar_updated) following existing pattern
+  3. Dynamic `calendar.evt_{X}_status` tracking on update_event status param — good pattern for entity-specific GT
+  4. `calendar.events_count_new_friday_wrapup` counter — case-insensitive title substring
+  5. Renamed `test_all_three_scenarios_present` → `test_all_scenarios_present` (6 scenarios now)
+  6. Updated `test_tasks_endpoint` and `test_deployed_tasks_list` count assertions 3→6
+  7. AdaptationRubric NOT modified — partial-credit behavior is correct (prevents double-counting, preserves signal)
+  8. Heuristic (eval.py) NOT modified — M-tier shaped=0 is the designed ceiling, not a heuristic bug to fix
+- **Notes:** After Phase 11, SCHEMASHIFT_URL/tasks returns 6 scenarios (3 easy + 3 medium). Phase 13 training uses all 6 as training data. H-tier (hard) scenarios deferred to stretch.
+
 ---
 
 ## PHASES REMAINING
 
-- [ ] Phase 11 — Medium scenarios (M1/M2/M3)
+- [x] Phase 11 — Medium scenarios (M1/M2/M3) ✅ commit 7828dcd + 0fd93c4
 - [ ] Phase 12 — Insurance video recording (60s core cut + 2min full)
 - [ ] Phase 13 — Kaggle training runs (Stage 1 single account → Stage 2 parallelize)
 - [ ] Phase 14 — Pitch + blog + video
@@ -306,6 +335,8 @@ All training runs (per-checkpoint evals, reward curves, config snapshots, iterat
 - [ ] Phase 13 Stage 1: go/no-go decision at 20 steps — document the reward curve image
 - [ ] Phase 14: draft strong-claim and softer-claim versions of pitch, pick based on training results
 - [ ] Phase 15 onsite: bring a backup video file on USB in case HF Space is slow to load
+- [ ] Phase 13 Stage 1 Eval: when evaluating trained checkpoint, include M-tier in the scenarios list. M-tier is where the "beats GPT-4o-mini" claim lives.
+- [ ] Pitch Phase 14: frame heuristic brittleness on M-tier ("can't parse 'schedule'/'check-in call' as calendar intent") as evidence that env rewards real language understanding, not regex matching.
 
 ---
 

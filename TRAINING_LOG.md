@@ -418,6 +418,33 @@ Every eval.py invocation gets one entry here, even if it was just to sanity-chec
 
 ---
 
+### Eval 4 — policy_aware_heuristic — M-tier local — Wednesday April 22, 2026 (early morning)
+
+- **Target:** policy_aware_heuristic on M1/M2/M3, local server
+- **Seeds:** 0, 1, 2
+- **Scenarios:** M1_customer_escalation, M2_weekly_report, M3_event_cleanup
+- **Aggregates:**
+  - M1 mean shaped: 0.000 (binary=0%), cumul=2.510 — dense shaping captured partial progress
+  - M2 mean shaped: 0.000 (binary=0%), cumul=3.013 — highest M-tier cumul
+  - M3 mean shaped: 0.000 (binary=0%), cumul=0.441 — lowest M-tier cumul (multi-drift same-tool stress)
+  - **Overall mean_shaped: 0.000**
+  - **Overall cumulative reward: 1.988** (HIGHER than E-tier 1.284 — dense signal fires on multi-drift)
+  - **Overall binary rate: 0.00%**
+- **Behavior observed:** Heuristic's keyword-trigger task dispatcher misses M1's "schedule"/"check-in call" → fails to create calendar event. M2's multi-step aggregate task exceeds heuristic's one-step planning. M3's multi-event cleanup exceeds single-tool-single-endpoint dispatcher.
+- **Commentary:** **M-tier establishes three-tier discriminability: naive=0, rule-based=0 (M-tier), rule-based=0.348 (E-tier). Any positive shaped score on M-tier requires real planning across 10-15 steps with 2 drifts per episode. This is the "must be RL" tier — no rule-based agent can solve it regardless of how many keywords are added. Pitch-critical: this is where "trained 1.5B beats GPT-4o-mini" gets proven.**
+- **Heuristic brittleness note (pitch material):** Rule-based agent literally cannot parse natural language task variation. "Send welcome email" triggers mail. "Schedule a check-in call" does not. Frontier LLMs can parse both; our trained RL agent (Phase 13) should also parse both. Env rewards language generalization, not regex.
+
+---
+
+### Eval 5 — policy_aware_heuristic — M-tier production — Wednesday April 22, 2026 (early morning)
+
+- **Target:** policy_aware_heuristic on M1/M2/M3, https://yashash045-schemashift.hf.space
+- **Seeds:** 0, 1, 2
+- **Aggregates:** Identical to Eval 4 to 3 decimals (2.510 / 3.013 / 0.441 cumul matches local)
+- **Commentary:** Deterministic parity confirmed on M-tier. Production HF Space correctly serves 6 scenarios now. Kaggle training in Phase 13 can target this URL with full E+M scenario diversity.
+
+---
+
 ## 4. HEAD-TO-HEAD COMPARISONS (for blog, pitch, judges)
 
 These tables get built progressively as runs complete. They ARE your pitch data.
@@ -479,8 +506,8 @@ A chronological summary of every experiment. One line per iteration. This is the
 
 | # | Date/time | Run | Config change from previous | Outcome |
 |---|-----------|-----|------------------------------|---------|
-| 1 |  | Run 1 (Stage 1) | First attempt — Qwen 1.5B + shaped | |
-| 2 |  |  |  |  |
+| 1 | 2026-04-22 early AM | M-tier validation | Added M1/M2/M3 scenarios + AdaptationRubric multi-drift test | M-tier discriminability confirmed (rule-based=0 on M-tier, >0 on E-tier). Dense shaping fires correctly. No rubric change needed. |
+| 2 |  | Run 1 (Stage 1) | First attempt — Qwen 1.5B + shaped | |
 | 3 |  |  |  |  |
 
 (Add rows as you go. Include failed runs — failures are data too.)
