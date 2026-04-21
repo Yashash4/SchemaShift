@@ -36,11 +36,17 @@ def test_deployed_tasks_list() -> None:
     r = httpx.get(f"{DEPLOY_URL}/tasks", timeout=30.0)
     assert r.status_code == 200
     body = r.json()
-    assert body.get("count") == 3
+    assert body.get("count") == 6
     task_ids = [t["task_id"] for t in body["tasks"]]
-    assert "E1_onboard_new_hire" in task_ids
-    assert "E2_meeting_invite_blast" in task_ids
-    assert "E3_customer_lookup" in task_ids
+    for required in (
+        "E1_onboard_new_hire",
+        "E2_meeting_invite_blast",
+        "E3_customer_lookup",
+        "M1_customer_escalation",
+        "M2_weekly_report",
+        "M3_event_cleanup",
+    ):
+        assert required in task_ids, f"{required} missing from /tasks response"
 
 
 @REQUIRES_DEPLOY
