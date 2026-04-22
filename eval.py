@@ -381,6 +381,14 @@ class LLMAgent(BaseAgent):
                 )
             except ImportError:
                 raise RuntimeError("huggingface_hub not installed.")
+        elif self.provider == "ollama":
+            key = os.getenv("OLLAMA_API_KEY")
+            if not key:
+                raise RuntimeError(
+                    "OLLAMA_API_KEY not set (populate .env or export the variable)."
+                )
+            self._ollama_key = key
+            self._client = None  # httpx call is stateless; no client object needed
         elif self.provider == "checkpoint":
             raise NotImplementedError("Checkpoint loading implemented in Phase 13.")
         else:
@@ -454,6 +462,22 @@ Your next action:"""
                 temperature=0.01,
             )
             return response.choices[0].message.content or ""
+        if self.provider == "ollama":
+            import httpx
+            r = httpx.post(
+                "https://ollama.com/api/chat",
+                headers={"Authorization": f"Bearer {self._ollama_key}"},
+                json={
+                    "model": self.model_id,
+                    "messages": [{"role": "user", "content": prompt}],
+                    "stream": False,
+                    "options": {"temperature": 0.0, "num_predict": 500},
+                },
+                timeout=120.0,
+            )
+            r.raise_for_status()
+            body = r.json()
+            return body.get("message", {}).get("content", "") or ""
         raise ValueError(f"Provider not callable: {self.provider}")
 
     def _parse(self, text: str) -> Action:
@@ -495,6 +519,8 @@ def build_agent(baseline: str) -> BaseAgent:
         return LLMAgent(provider="openai", model_id=baseline.split(":", 1)[1])
     if baseline.startswith("llm:") or baseline.startswith("hf:"):
         return LLMAgent(provider="hf", model_id=baseline.split(":", 1)[1])
+    if baseline.startswith("ollama:"):
+        return LLMAgent(provider="ollama", model_id=baseline.split(":", 1)[1])
     if baseline.startswith("checkpoint:"):
         return LLMAgent(provider="checkpoint", model_id=baseline.split(":", 1)[1])
     raise ValueError(f"Unknown baseline: {baseline}")
@@ -628,6 +654,13 @@ def main() -> int:
     )
     parser.add_argument("--out-dir", default="eval_results")
     args = parser.parse_args()
+
+    # Load .env so secrets (OLLAMA_API_KEY, OPENAI_API_KEY, HF_TOKEN) are available
+    try:
+        from dotenv import load_dotenv
+        load_dotenv()
+    except ImportError:
+        pass
 
     seeds = [int(s.strip()) for s in args.seeds.split(",") if s.strip()]
     tasks = [t.strip() for t in args.tasks.split(",") if t.strip()]

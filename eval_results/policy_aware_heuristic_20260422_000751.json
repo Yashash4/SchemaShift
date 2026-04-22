@@ -1,0 +1,48 @@
+{
+  "baseline": "policy_aware_heuristic",
+  "timestamp": "20260422_000751",
+  "results": [
+    {
+      "task_id": "M1_customer_escalation",
+      "seed": 0,
+      "completion": 0.5,
+      "drift_detection": 0.5,
+      "adaptation": 0.0,
+      "efficiency": 0.7083333333333333,
+      "shaped_total": 0.0,
+      "cumulative_reward": 2.5104166666666665,
+      "binary": 0.0,
+      "steps_used": 7,
+      "final_action_type": "complete_task",
+      "error": null
+    },
+    {
+      "task_id": "M2_weekly_report",
+      "seed": 0,
+      "completion": 0.25,
+      "drift_detection": 0.0,
+      "adaptation": 1.0,
+      "efficiency": 0.5,
+      "shaped_total": 0.0,
+      "cumulative_reward": 3.0125,
+      "binary": 0.0,
+      "steps_used": 10,
+      "final_action_type": "complete_task",
+      "error": null
+    },
+    {
+      "task_id": "M3_event_cleanup",
+      "seed": 0,
+      "completion": 0.2,
+      "drift_detection": 0.0,
+      "adaptation": 0.0,
+      "efficiency": 0.875,
+      "shaped_total": 0.0,
+      "cumulative_reward": 0.44125000000000003,
+      "binary": 0.0,
+      "steps_used": 3,
+      "final_action_type": "complete_task",
+      "error": null
+    }
+  ]
+}

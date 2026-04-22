@@ -114,6 +114,23 @@ def test_build_agent_factory() -> None:
         build_agent("nonexistent_baseline")
 
 
+def test_build_ollama_agent(monkeypatch) -> None:
+    """Factory constructs an LLMAgent with provider=ollama and the full model tag.
+
+    Covers the colon-in-model-tag case (e.g., 'gpt-oss:120b') — split(':', 1)
+    must keep the tag intact after the 'ollama:' prefix is stripped.
+    No real API call; monkeypatched key.
+    """
+    from eval import LLMAgent
+    monkeypatch.setenv("OLLAMA_API_KEY", "fake_key_for_test_only")
+    agent = build_agent("ollama:gpt-oss:120b")
+    assert isinstance(agent, LLMAgent)
+    assert agent.provider == "ollama"
+    assert agent.model_id == "gpt-oss:120b"
+    assert agent.name == "ollama:gpt-oss:120b"
+    assert agent._ollama_key == "fake_key_for_test_only"
+
+
 def test_print_baseline_table_format() -> None:
     results = [
         EpisodeResult(

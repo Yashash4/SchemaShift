@@ -1,0 +1,20 @@
+{
+  "baseline": "ollama:gpt-oss:120b",
+  "timestamp": "20260422_010712",
+  "results": [
+    {
+      "task_id": "E1_onboard_new_hire",
+      "seed": 0,
+      "completion": 0.4,
+      "drift_detection": 0.0,
+      "adaptation": 0.0,
+      "efficiency": 0.6875,
+      "shaped_total": 0.0,
+      "cumulative_reward": 1.22625,
+      "binary": 0.0,
+      "steps_used": 5,
+      "final_action_type": "complete_task",
+      "error": null
+    }
+  ]
+}
