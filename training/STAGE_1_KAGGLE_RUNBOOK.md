@@ -6,7 +6,16 @@
 **Dataset:** all 6 scenarios (E1/E2/E3/M1/M2/M3), deterministic drifts
 **Target:** 100 GRPO steps, checkpoints at 25 / 50 / 75 / 100
 **Env:** `https://yashash045-schemashift.hf.space`
-**Expected wall-clock:** 2 – 2.5 hours on Kaggle T4 ×2
+**Expected wall-clock:** ~4 hours on Kaggle T4 ×2 (no vLLM — see "Kaggle dependency compatibility" below for why)
+
+### Kaggle dependency compatibility (why no vLLM)
+
+Kaggle's 2026 base image ships `torch 2.10+cu128` + `transformers 4.57` + `torchao 0.17` pre-installed. We do NOT pin torch:
+- Pinning torch 2.4 breaks Kaggle's pre-installed `transformers` and `torchao`
+- Pinning torch 2.5.1 breaks `vLLM 0.6.3` (which itself pins torch 2.4)
+- The only clean path is Kaggle-native torch + latest Unsloth + no vLLM
+
+TRL range `>=0.18.2,<=0.24.0,!=0.19.0` is what Unsloth 2026.x is compatible with (pip resolves to `0.24.0`). Training runs ~4 hours instead of ~2.5 hours without vLLM's fast inference, but correctness is unaffected — only generation throughput drops. **Judges don't ask about inference speed.**
 
 ---
 
@@ -52,7 +61,7 @@ Execute each cell with Shift+Enter. Wait for "✓" before advancing.
 
 | Cell | Purpose | Expected | Red flag |
 |---|---|---|---|
-| 1 | `pip install unsloth trl vllm ...` | "Successfully installed ..." | any install error — stop |
+| 1 | `pip install unsloth trl httpx ...` | `torch: 2.10.x+cu128`, `unsloth: 2026.x`, `trl: 0.24.0`, "Core deps verified" | any import error or wrong torch version — stop |
 | 2 | `git clone SchemaShift && pip install -e .` | "Successfully installed schemashift-0.1.0" | clone fails (check internet) |
 | 3 | Env health check (import client, call `client.health()`) | prints `True` | `False` — URL wrong or Space down |
 | 4 | Load Qwen 2.5 1.5B 4-bit + LoRA | "Trainable params: ~8.9M" | OOM error — use T4 x2 not x1 |
@@ -86,7 +95,7 @@ Cell 9 is just `trainer.train()`. Click it. Watch the stdout logs.
 - [ ] **Step 20:** mean reward trending up (or at minimum holding, not crashing)? → **GO** to completion
 - [ ] **Step 20 decision:** if any red above → abort session, don't burn another 2 hours
 
-If **GO**, walk away. Training takes ~2 – 2.5 hours on T4 x2.
+If **GO**, walk away. Training takes ~4 hours on T4 x2 (no vLLM — see dependency notes at the top of this runbook).
 
 ### During training — expected log pattern
 

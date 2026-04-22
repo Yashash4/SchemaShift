@@ -287,9 +287,11 @@ Every training attempt, successful or failed. Number them sequentially across th
   - logging_steps: 5
   - save_steps: 25
   - max_steps: 100
-  - use_vllm: true, vllm_mode: colocate
+  - use_vllm: **false** (dropped — vLLM 0.6.3 pins torch 2.4, incompatible with Kaggle's native torch 2.10+cu128; wall-clock becomes ~4h instead of ~2.5h but correctness is unaffected)
   - push_to_hub: true
   - hub_model_id: `yashash045/schemashift-qwen15b-kaggle`
+- **TRL version:** `trl>=0.18.2,<=0.24.0,!=0.19.0` (Unsloth 2026.x compat range; pip resolves to 0.24.0)
+- **Torch version:** Kaggle native (`torch 2.10+cu128`, not pinned)
 - **Quantization:** 4-bit via Unsloth
 - **Hardware:** Kaggle T4 x2 (P100 acceptable fallback — record which)
 - **SchemaShift env URL:** `https://yashash045-schemashift.hf.space`
