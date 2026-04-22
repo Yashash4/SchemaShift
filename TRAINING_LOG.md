@@ -264,7 +264,7 @@ Cumulative is supporting evidence, not the trophy. Shaped and binary win the pit
 
 Every training attempt, successful or failed. Number them sequentially across the team.
 
-### Run 1 — Account 2 (Gajanand) — STAGE 1 MAIN — [Date Time start]
+### Run 1 — Account 1 (Yashash) — STAGE 1 MAIN — [STARTED TIME PLACEHOLDER]
 
 **This is Stage 1 — the pipeline-validation run. Critical go/no-go for Stage 2.**
 
@@ -272,7 +272,7 @@ Every training attempt, successful or failed. Number them sequentially across th
 
 - **Model:** Qwen 2.5 1.5B Instruct (`Qwen/Qwen2.5-1.5B-Instruct`)
 - **Reward variant:** `return reward.shaped_total` (full: rubric + dense step shaping + gates)
-- **Scenario set:** deterministic (original SCENARIOS from scenarios.py, no procedural scheduler)
+- **Scenario set:** deterministic (all 6 scenarios E1/E2/E3/M1/M2/M3 from scenarios.py, no procedural scheduler)
 - **LoRA config:**
   - r: 16
   - lora_alpha: 32
@@ -288,10 +288,18 @@ Every training attempt, successful or failed. Number them sequentially across th
   - save_steps: 25
   - max_steps: 100
   - use_vllm: true, vllm_mode: colocate
+  - push_to_hub: true
+  - hub_model_id: `yashash045/schemashift-qwen15b-kaggle`
 - **Quantization:** 4-bit via Unsloth
-- **Hardware:** Kaggle T4 x2 (or P100 fallback — note which)
-- **SchemaShift env URL:** [HF Space URL from Phase 10]
-- **Commit hash of repo at training time:**
+- **Hardware:** Kaggle T4 x2 (P100 acceptable fallback — record which)
+- **SchemaShift env URL:** `https://yashash045-schemashift.hf.space`
+- **Commit hash of repo at training time:** [FILL IN AT CELL 9 START — run `!git rev-parse HEAD` in Kaggle cell before training]
+- **Notebook path in Kaggle clone:** `/kaggle/working/SchemaShift/training/grpo_kaggle.ipynb`
+- **Compared baselines (already measured, see Section 1 and Section 3):**
+  - naive_heuristic 5-seed: 0.000 shaped / 0.233 cumul / 0% binary
+  - policy_aware_heuristic 5-seed: 0.174 shaped / 1.636 cumul / 33.33% binary
+  - gpt-oss:120b 3-seed: 0.000 shaped / 0.989 cumul / 0% binary
+  - Win-threshold tiers: see Section 1 gpt-oss:120b entry (Tier 1 / Tier 2 / Tier 3)
 
 #### Pre-training check (Cells 1-8 verification before Cell 9)
 
