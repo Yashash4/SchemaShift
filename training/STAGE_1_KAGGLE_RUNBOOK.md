@@ -8,14 +8,35 @@
 **Env:** `https://yashash045-schemashift.hf.space`
 **Expected wall-clock:** ~4 hours on Kaggle T4 ×2 (no vLLM — see "Kaggle dependency compatibility" below for why)
 
-### Kaggle dependency compatibility (why no vLLM)
+### Kaggle dependency compatibility (why no vLLM, why TRL 0.29.0)
 
 Kaggle's 2026 base image ships `torch 2.10+cu128` + `transformers 4.57` + `torchao 0.17` pre-installed. We do NOT pin torch:
 - Pinning torch 2.4 breaks Kaggle's pre-installed `transformers` and `torchao`
 - Pinning torch 2.5.1 breaks `vLLM 0.6.3` (which itself pins torch 2.4)
 - The only clean path is Kaggle-native torch + latest Unsloth + no vLLM
 
-TRL range `>=0.18.2,<=0.24.0,!=0.19.0` is what Unsloth 2026.x is compatible with (pip resolves to `0.24.0`). Training runs ~4 hours instead of ~2.5 hours without vLLM's fast inference, but correctness is unaffected — only generation throughput drops. **Judges don't ask about inference speed.**
+**TRL pin: `trl==0.29.0`** (mirrors previous hackathon winner sid-rp/kube-sre-gym). Earlier attempts at 0.18.2 and 0.24.0 both eagerly imported optional deps (vllm_client / mergekit) and crashed on clean Kaggle. TRL 0.29.0 moved those to experimental per PR #5057 and verified-imports-clean (no vLLM installed) locally.
+
+Training runs ~4 hours instead of ~2.5 hours without vLLM's fast inference, but correctness is unaffected — only generation throughput drops. **Judges don't ask about inference speed.**
+
+### Winner vs ours — what we mirror and where we diverge
+
+Previous hackathon winner: [sid-rp/kube-sre-gym](https://github.com/sid-rp/kube-sre-gym) — OpenEnv + TRL GRPO on Kubernetes incidents.
+
+| Dimension | Winner (H100) | Winner's Colab variant (T4) | Ours (Kaggle T4 free) |
+|---|---|---|---|
+| TRL version | `trl[vllm]==0.29.0` | `trl[vllm]>=0.29.0` | `trl==0.29.0` (no vllm extra) |
+| vLLM | `vllm==0.11.2`, colocate | `vllm>=0.11.0`, colocate | **none** (`fast_inference=False`) |
+| Base model | Qwen3-0.6B | Qwen3-0.6B / Qwen3-1.7B | Qwen2.5-1.5B |
+| Rollout mechanism | `trl.experimental.openenv.generate_rollout_completions` (multi-turn agent, iterative obs→act) | same | **reward_fn does env loop inside** (single completion → parsed action sequence → full episode) — `rollout_func` param requires `use_vllm=True`, not viable for us |
+| num_generations | 8 | 8 | 4 (T4 memory budget) |
+| max_completion_length | 512 | 512 | 1024 (our JSON actions are longer) |
+| Loss type | `dapo` (asymmetric clipping + dynamic sampling) | `dapo` | **`dapo`** (adopted from winner) |
+| LR schedule | cosine, warmup=2 | cosine, warmup=2 | **cosine, warmup=2** (adopted) |
+| beta (KL) | 0.01 | default | **0.01** (adopted) |
+| GPU | 1× H100 80GB | 1× T4 16GB | 2× T4 16GB (use first only) |
+
+**What this means for pitch:** we're using the winner's stable TRL version + their DAPO loss + their LR schedule — the recipe parts that matter for convergence. We don't mirror their multi-turn iterative-observation pattern because it's gated behind vLLM, which we can't install. Our single-shot action-sequence pattern produces simpler completions but still trains the same adaptive-tool-use skill.
 
 ---
 
@@ -61,7 +82,7 @@ Execute each cell with Shift+Enter. Wait for "✓" before advancing.
 
 | Cell | Purpose | Expected | Red flag |
 |---|---|---|---|
-| 1 | `pip install unsloth trl httpx ...` | `torch: 2.10.x+cu128`, `unsloth: 2026.x`, `trl: 0.24.0`, "Core deps verified" | any import error or wrong torch version — stop |
+| 1 | `pip install unsloth "trl==0.29.0" peft httpx ...` | `torch: 2.10.x+cu128`, `unsloth: 2026.x`, `trl: 0.29.0`, `peft: ...`, "Core deps verified" | any import error or wrong torch version — stop |
 | 2 | `git clone SchemaShift && pip install -e .` | "Successfully installed schemashift-0.1.0" | clone fails (check internet) |
 | 3 | Env health check (import client, call `client.health()`) | prints `True` | `False` — URL wrong or Space down |
 | 4 | Load Qwen 2.5 1.5B 4-bit + LoRA | "Trainable params: ~8.9M" | OOM error — use T4 x2 not x1 |

@@ -290,8 +290,11 @@ Every training attempt, successful or failed. Number them sequentially across th
   - use_vllm: **false** (dropped — vLLM 0.6.3 pins torch 2.4, incompatible with Kaggle's native torch 2.10+cu128; wall-clock becomes ~4h instead of ~2.5h but correctness is unaffected)
   - push_to_hub: true
   - hub_model_id: `yashash045/schemashift-qwen15b-kaggle`
-- **TRL version:** `trl>=0.18.2,<=0.24.0,!=0.19.0` (Unsloth 2026.x compat range; pip resolves to 0.24.0)
+- **TRL version:** `trl==0.29.0` (pivoted from 0.18-0.24 range after 3h of Kaggle debug — both older ranges had eager imports of vllm_client or mergekit that crashed on clean Kaggle. 0.29.0 moved them to experimental per PR #5057, verified clean locally)
+- **vLLM:** NOT installed (`fast_inference=False` on FastLanguageModel; `use_vllm=False` in GRPOConfig)
 - **Torch version:** Kaggle native (`torch 2.10+cu128`, not pinned)
+- **Winner-adopted tweaks:** `loss_type="dapo"` + `lr_scheduler_type="cosine"` + `warmup_steps=2` + `beta=0.01` + `max_grad_norm=1.0` + `save_total_limit=3` + `hub_strategy="every_save"`. From [sid-rp/kube-sre-gym](https://github.com/sid-rp/kube-sre-gym) train.py.
+- **NOT adopted (requires vLLM):** `trl.experimental.openenv.generate_rollout_completions` multi-turn rollout orchestration. Our env loop stays inside `reward_fn` which TRL calls after its internal `model.generate()`.
 - **Quantization:** 4-bit via Unsloth
 - **Hardware:** Kaggle T4 x2 (P100 acceptable fallback — record which)
 - **SchemaShift env URL:** `https://yashash045-schemashift.hf.space`
