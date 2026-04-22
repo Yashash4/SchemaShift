@@ -165,12 +165,13 @@ Meta's comparable-size baseline.
 
 ### Baseline — gpt-oss:120b (the pitch target — frontier open model)
 
-**PITCH-CRITICAL NOTE:** gpt-oss:120b is our frontier-class baseline. OpenAI's open model, tool-use aligned, 120B params — **80× our trained 1.5B's size**. gpt-oss scored **0.000 shaped / 0.989 cumulative / 0% binary across 18 episodes** (3 seeds × 6 scenarios). The 0.989 cumulative is diagnostic: it proves the model earns dense rewards for sub-behaviors (inspect-after-failure, correct drift reports, successful retries) but cannot sustain a workflow through completion. 13/18 episodes ended with voluntary `complete_task` before task completion; 5/18 hit max_steps mid-call.
+gpt-oss:120b is our frontier-class baseline. OpenAI's open model, tool-use aligned, 120B params — 80× our trained 1.5B's size. gpt-oss scored 0.000 shaped / 0.989 cumulative / 0% binary across 18 episodes (3 seeds × 6 scenarios). The 0.989 cumulative is diagnostic: it proves the model earns dense rewards for sub-behaviors (inspect-after-failure, correct drift reports, successful retries) but cannot sustain a workflow through completion. 13/18 episodes ended with voluntary complete_task before task completion; 5/18 hit max_steps mid-call.
 
-**The real win condition for our trained Qwen 1.5B:**
-- **Tier 1 (minimum credible):** shaped > 0.1 overall, binary > 0% on 2+ scenarios, consistent across all 3 seeds
-- **Tier 2 (strong):** shaped > 0.35, binary > 40% on E-tier, binary > 0% on at least one M-tier scenario
-- **Tier 3 (spectacular):** shaped > 0.6, binary > 70% E-tier + > 25% M-tier, held-out seeds confirm generalization
+The real win condition for our trained Qwen 1.5B:
+
+- Tier 1 (minimum credible): shaped > 0.1 overall, binary > 0% on 2+ scenarios, consistent across all 3 seeds
+- Tier 2 (strong): shaped > 0.35, binary > 40% on E-tier, binary > 0% on at least one M-tier scenario
+- Tier 3 (spectacular): shaped > 0.6, binary > 70% E-tier + > 25% M-tier, held-out seeds confirm generalization
 
 Cumulative is supporting evidence, not the trophy. Shaped and binary win the pitch. Consistency across seeds matters more than any single lucky episode. At final eval, we report ALL 5 seeds per scenario per checkpoint — no cherry-picking. Reward curves across checkpoints (25/50/75/100) show learning trajectory, not just endpoint.
 
@@ -255,7 +256,7 @@ Cumulative is supporting evidence, not the trophy. Shaped and binary win the pit
 
   **The 120B frontier model loses to a 100-line rule-based agent by 33 percentage points on binary completion.** The rule-based agent follows a deterministic mail→calendar→CRM sequence; gpt-oss:120b meanders, inspects uselessly, and quits. This is the pitch slide: "Frontier LLMs know the tools exist but can't use them under drift. A trained 1.5B with SchemaShift does."
 
-  Win thresholds for our trained Qwen 1.5B are defined in the PITCH-CRITICAL NOTE at the top of this entry (Tier 1 / Tier 2 / Tier 3). We report all 5 seeds per scenario per checkpoint — no cherry-picking.
+  Win thresholds for our trained Qwen 1.5B are defined at the top of this baseline entry (Tier 1 / Tier 2 / Tier 3). We report all 5 seeds per scenario per checkpoint — no cherry-picking.
 
 ---
 
